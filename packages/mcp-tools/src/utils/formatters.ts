@@ -2,7 +2,9 @@ import { XMLBuilder } from 'fast-xml-parser';
 
 /**
  * Formats a response by combining a message with structured data.
- * Converts the provided object to XML format and appends the message.
+ * Output format is controlled by the OUTPUT_FORMAT environment variable:
+ * - 'json': JSON output
+ * - 'yaml' or unset: XML output (legacy)
  */
 export function formatResponse(
   message: string | null,
@@ -13,6 +15,13 @@ export function formatResponse(
   for (const [key, value] of Object.entries(object)) {
     if (!value) continue;
     formattedObject[key] = value;
+  }
+
+  const outputFormat = process.env['OUTPUT_FORMAT']?.toLowerCase();
+
+  if (outputFormat === 'json') {
+    const contextString = JSON.stringify(formattedObject, null, 2);
+    return `${message}: \n${contextString}\n`;
   }
 
   const builder = new XMLBuilder({

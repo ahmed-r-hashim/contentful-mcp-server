@@ -1,6 +1,6 @@
 {
   "name": "@contentful/mcp-tools",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
@@ -23,6 +23,7 @@
   "scripts": {
     "prebuild": "npm run clean",
     "build": "tsup",
+    "package": "npm pack",
     "clean": "rimraf dist",
     "dev": "tsup --watch",
     "test": "vitest",

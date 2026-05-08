@@ -18,22 +18,39 @@ if (process.env.NODE_ENV === 'development') {
 
 const MCP_SERVER_NAME = '@contentful/mcp-server';
 
-async function initializeServer() {
+export interface CreateServerOptions {
+  isHTTP?: boolean;
+  outputFormat?: 'yaml' | 'json';
+}
+
+/**
+ * Create and configure an MCP server instance
+ */
+export function createServer(options: CreateServerOptions = {}): McpServer {
+  const { outputFormat = 'json' } = options;
+
   const server = new McpServer({
     name: MCP_SERVER_NAME,
     version: getVersion(),
   });
 
-  registerAllTools(server);
+  registerTools(server, { outputFormat });
   registerAllPrompts(server);
   registerAllResources(server);
 
   return server;
 }
 
+/**
+ * Register all tools with the server
+ */
+function registerTools(server: McpServer): void {
+  registerAllTools(server);
+}
+
 async function main() {
   try {
-    const server = await initializeServer();
+    const server = createServer();
     const transport = new StdioServerTransport();
     await server.connect(transport);
   } catch (error) {

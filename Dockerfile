@@ -1,11 +1,22 @@
 # Use a Python image with uv pre-installed
+FROM node:22.13-slim AS tools
+
+# Install the project into `/app`
+WORKDIR /app
+
+COPY packages/mcp-tools/package.json .
+RUN npm install
+COPY packages/mcp-tools/ .
+RUN npm run package
+
+# Use a Python image with uv pre-installed
 FROM node:22.13-slim AS builder
 
 # Install the project into `/app`
 WORKDIR /app
 
 COPY packages/mcp-server/package.json .
-COPY packages/mcp-tools/contentful-mcp-tools-0.4.2.tgz .
+COPY --from=tools /app/contentful-mcp-tools-0.4.2.tgz .
 RUN npm install
 COPY packages/mcp-server/ .
 RUN npm run build
